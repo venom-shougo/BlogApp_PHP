@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  db:
+    build: ./mysql
+    environment:
+      TZ: "Asia/Tokyo"
+    ports:
+      - 33061:3306
+    volumes:
+    - ./mysql/mysql_data:/var/lib/mysql
+    env_file:
+      - ./mysql/db-variables.env
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    env_file:
+      - ./mysql/myadmin.env
+    depends_on:
+      - db
+    ports:
+      - 8980:80
+
+  php:
+    build: ./php
+    depends_on:
+    - db
+    ports:
+    - 8989:80
+    volumes:
+      - ./src:/var/www/html
